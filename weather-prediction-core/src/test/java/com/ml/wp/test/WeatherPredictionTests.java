@@ -63,9 +63,9 @@ public class WeatherPredictionTests {
 	@Test
 	public void areAlignButNotWithTheSun() {
 		try {
-			Coordinates t1 = new Coordinates(2.0, -2.0);
-			Coordinates t2 = new Coordinates(-1.0, 1.0);
-			Coordinates t3 = new Coordinates(3.0, -3.0);
+			Coordinates t1 = new Coordinates(1.0, -2.0);
+			Coordinates t2 = new Coordinates(-2.0, 1.0);
+			Coordinates t3 = new Coordinates(2.0, -3.0);
 			Coordinates sun = new Coordinates(0.0, 0.0);
 			if (Coordinates2DHelper.areAligned(t1, t2, t3)) {
 				assertFalse(Coordinates2DHelper.areAligned(t1, t2, sun));
