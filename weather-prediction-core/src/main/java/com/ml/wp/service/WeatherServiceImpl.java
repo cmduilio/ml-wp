@@ -51,9 +51,8 @@ public class WeatherServiceImpl implements WeatherService {
 	public Integer isPeriodsOfOptimalConditions(Galaxy g) {
 		List<Planet> planets = g.getPlanets();
 		if (!planets.isEmpty()) {
-			//estan alineados entre los planetas?
 			if (Coordinates2DHelper.areAligned(planets.get(0).getPos(), planets.get(1).getPos(), planets.get(2).getPos())) {
-				//si estan alineados, pregunto que no esten alineados con el sol
+				
 				if(!Coordinates2DHelper.areAligned(planets.get(0).getPos(), planets.get(1).getPos(), sun)) 
 					if(!Coordinates2DHelper.areAligned(planets.get(0).getPos(), planets.get(2).getPos(), sun)) 
 						if(!Coordinates2DHelper.areAligned(planets.get(1).getPos(), planets.get(2).getPos(), sun)) 
@@ -77,7 +76,7 @@ public class WeatherServiceImpl implements WeatherService {
 						pr.setPeriodsOfOptimalConditions(1);
 					}
 				}
-				//si no lo estan, forman un triangulo con el sol en su interior?
+				//si no lo estan forman un triangulo con el sol en su interior?
 				else {
 					if (Coordinates2DHelper.isCoordinateInsideTriangle(planets.get(0).getPos(), planets.get(1).getPos(), planets.get(2).getPos(), sun)) {
 						pr.setPeriodsOfRain(1);

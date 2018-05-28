@@ -1,85 +1,50 @@
 package com.ml.wp.util;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import com.ml.wp.model.Coordinates;
 
 public class Coordinates2DHelper {
 	
 	public static boolean areAligned(Coordinates c1, Coordinates c2, Coordinates c3) {
-		
-		BigDecimal c1x = new BigDecimal(c1.getX());
-		BigDecimal c1y = new BigDecimal(c1.getY());
-		BigDecimal c2x = new BigDecimal(c2.getX());
-		BigDecimal c2y = new BigDecimal(c2.getY());
-		BigDecimal c3x = new BigDecimal(c3.getX());
-		BigDecimal c3y = new BigDecimal(c3.getY());
-		
-		BigDecimal part1 = (c2x.subtract(c1x)).multiply(c3y.subtract(c2y)).setScale(4, RoundingMode.HALF_UP);
-		BigDecimal part2 = (c2y.subtract(c1y)).multiply(c3x.subtract(c2x)).setScale(4, RoundingMode.HALF_UP);
-		
-		if (part1.compareTo(part2) == 0) return true; 
+		double x1 = c1.getX();
+		double y1 = c1.getY();
+		double x2 = c2.getX();
+		double y2 = c2.getY();
+		double x3 = c3.getX();
+		double y3 = c3.getY();
+		if (((x2-x1)*(y3-y2))-((y2-y1)*(x3-x2)) == 0.00) return true;
 		else return false;
-		
-//		Double part1 = RoundUtil.getDoubleWith4Decimals((c2.getX() - c1.getX()) * (c3.getY() - c2.getY()));
-//		Double part2 = RoundUtil.getDoubleWith4Decimals((c2.getY() - c1.getY()) * (c3.getX() - c2.getX()));
-//		if (part1.compareTo(part2)==0) return true;
-//		else return false;
 	}
 	
 	public static Double getDistanceBetweenTwoCoordinates(Coordinates c1, Coordinates c2) {
 		return RoundUtil.getDoubleWith4Decimals(Math.sqrt(Math.pow((c2.getX()-c1.getX()),2)+Math.pow((c2.getY()-c1.getY()),2)));
-		
-//		BigDecimal c1x = new BigDecimal(c1.getX()).setScale(4, RoundingMode.HALF_UP);
-//		BigDecimal c1y = new BigDecimal(c1.getY()).setScale(4, RoundingMode.HALF_UP);
-//		BigDecimal c2x = new BigDecimal(c2.getX()).setScale(4, RoundingMode.HALF_UP);
-//		BigDecimal c2y = new BigDecimal(c2.getY()).setScale(4, RoundingMode.HALF_UP);
-//		return RoundUtil.getDoubleWith4Decimals(Math.sqrt(((c2x.subtract(c1x)).pow(2).add((c2y.subtract(c1y)).pow(2))).setScale(4, RoundingMode.HALF_UP).doubleValue()));
-		
 	}
 	
 	public static Double getTrianglePerimeter(Coordinates c1, Coordinates c2, Coordinates c3) {
 		Double c1c2 = getDistanceBetweenTwoCoordinates(c1, c2);
 		Double c1c3 = getDistanceBetweenTwoCoordinates(c1, c3);
 		Double c2c3 = getDistanceBetweenTwoCoordinates(c2, c3);
-		return (c1c2+c1c3+c2c3);
+		return RoundUtil.getDoubleWith4Decimals(c1c2+c1c3+c2c3);
 	}
 	
 	public static boolean isCoordinateInsideTriangle(Coordinates t1, Coordinates t2, Coordinates t3, Coordinates x) throws Exception {
-		Double tmp = 0.0;
-		Double t0 = calculateTriangleArea(t1, t2, t3);
-		tmp += calculateTriangleArea(t1, t2, x);
-		tmp += calculateTriangleArea(t2, t3, x);
-		tmp += calculateTriangleArea(t3, t1, x);
-		
-		tmp = RoundUtil.getDoubleWith4Decimals(tmp);
-		t0 = RoundUtil.getDoubleWith4Decimals(t0);
-		if (tmp.compareTo(t0)==0) {
-			return true;
-		}
-		return false;
+		return isInside(t1.getX(), t1.getY(), t2.getX(), t2.getY(), t3.getX(), t3.getY(), x.getX(), x.getY());
 	}
 
-	private static Double calculateTriangleArea(Coordinates t1, Coordinates t2, Coordinates t3) throws Exception {
-		
-		//hallar area por formula de Heron
-		//1ero Semiperimetro
-		Double s = RoundUtil.getDoubleWith4Decimals(getTrianglePerimeter(t1,t2,t3)/2);
-		
-		//calculo los lados
-		Double ab = getDistanceBetweenTwoCoordinates(t1, t2);
-		Double ac = getDistanceBetweenTwoCoordinates(t1, t3);
-		Double bc = getDistanceBetweenTwoCoordinates(t2, t3);
-		
-		BigDecimal sab = new BigDecimal(s-ab).setScale(4, RoundingMode.HALF_UP);
-		BigDecimal sac = new BigDecimal(s-ac).setScale(4, RoundingMode.HALF_UP);
-		BigDecimal sbc = new BigDecimal(s-bc).setScale(4, RoundingMode.HALF_UP);
-		
-		Double aux = new BigDecimal(s).multiply(sab).multiply(sac).multiply(sbc).setScale(2,RoundingMode.HALF_UP).doubleValue();
-		
-//		return RoundUtil.getDoubleWith4Decimals(Math.sqrt(aux));
-		return Math.sqrt(aux);
+	public static Double calculateTriangleArea(Coordinates t1, Coordinates t2, Coordinates t3) throws Exception {
+		return RoundUtil.getDoubleWith4Decimals(area(t1.getX(), t1.getY(), t2.getX(), t2.getY(), t3.getX(), t3.getY()));
+	}
+	
+	
+	private static double area(double x1, double y1, double x2, double y2, double x3, double y3) {
+		return Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0);
+	}
+
+	private static boolean isInside(double x1, double y1, double x2, double y2, double x3, double y3, double x, double y) {
+		double A = area(x1, y1, x2, y2, x3, y3);
+		double A1 = area(x, y, x2, y2, x3, y3);
+		double A2 = area(x1, y1, x, y, x3, y3);
+		double A3 = area(x1, y1, x2, y2, x, y);
+		return (A == A1 + A2 + A3);
 	}
 	
 

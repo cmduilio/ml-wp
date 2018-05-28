@@ -16,6 +16,9 @@ public class WeatherConditionDate {
 	@Column(name="WEATHER_COND_DESC" , nullable=false)
 	private String weatherConditionDesc;
 	
+	public WeatherConditionDate() {
+		super();
+	}
 	public WeatherConditionDate(Long dayNumber, String conditionDesc) {
 		this.dayNumber = dayNumber;
 		this.weatherConditionDesc = conditionDesc;

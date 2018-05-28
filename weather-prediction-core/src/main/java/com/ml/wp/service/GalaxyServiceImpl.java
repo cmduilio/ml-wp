@@ -42,6 +42,7 @@ public class GalaxyServiceImpl implements GalaxyService {
 			List<Planet> planets = g.getPlanets();
 			for (Planet p : planets) {
 				p.simulatePlanetMovementInADay();
+				System.out.println(p.toString()); //DEBUG
 			}
 			PredictionResult pr = weatherService.evaluateAllClimates(g);
 			return pr;
@@ -60,6 +61,12 @@ public class GalaxyServiceImpl implements GalaxyService {
 			PredictionResult predictionResult = new PredictionResult();
 			for (int i = 1; i <= yearsInDays; i++) {
 				PredictionResult temp = simulateOneDay(g);
+				
+//				List<Planet> planets = g.getPlanets(); //DEBUG
+//				if (planets.get(0).getAngle().compareTo(0.00) == 0 && planets.get(1).getAngle().compareTo(0.00) == 0 && planets.get(02).getAngle().compareTo(0.00) == 0) {
+//					System.out.println("=== Dia en que todos volvieron al origen " + i );
+//				}
+				
 				temp.setMaxPerimeterDay(i);
 				predictionResult.add(temp);	
 				if (save) {

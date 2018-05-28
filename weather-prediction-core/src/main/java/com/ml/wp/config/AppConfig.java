@@ -20,9 +20,9 @@ public class AppConfig {
 	@Bean("defaultGalaxy")
 	public Galaxy defaultGalaxy(){
 		List<Planet> planets = new ArrayList<Planet>();
-		planets.add(new Planet("Ferengis", 1.0, 500.0, 0.0, 500.0, 0.0));
-		planets.add(new Planet("Betasoides", 3.0, 2000.0, 0.0, 2000.0, 0.0));
-		planets.add(new Planet("Vulcanos", -5.0, 1000.0, 0.0, 1000.0, 0.0)); //ver antihorario
+		planets.add(new Planet("Ferengis", -1.0, 500.0, 0.0, 500.0, 0.0));
+		planets.add(new Planet("Betasoides", -3.0, 2000.0, 0.0, 2000.0, 0.0));
+		planets.add(new Planet("Vulcanos", 5.0, 1000.0, 0.0, 1000.0, 0.0)); //en positivo porque va antihorario
 		return new Galaxy(1L, planets);
 	 }
 }

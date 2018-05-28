@@ -83,6 +83,14 @@ public class Planet {
 	public void setPos(Coordinates pos) {
 		this.pos = pos;
 	}
+
+	@Override
+	public String toString() {
+		return "Planet [civilization=" + civilization + ", angularSpeed=" + angularSpeed + ", radious=" + radious
+				+ ", angle=" + angle + ", posx=" + this.getPosX() + ", posy=" + this.getPosY()  + "]";
+	}
+	
+	
 	
 	
 	
