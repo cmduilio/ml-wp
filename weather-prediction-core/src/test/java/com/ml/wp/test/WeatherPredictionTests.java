@@ -16,7 +16,9 @@ import com.ml.wp.Application;
 import com.ml.wp.model.Coordinates;
 import com.ml.wp.model.Galaxy;
 import com.ml.wp.model.PredictionResult;
+import com.ml.wp.model.WeatherConditionDate;
 import com.ml.wp.service.GalaxyService;
+import com.ml.wp.service.WeatherService;
 import com.ml.wp.util.Coordinates2DHelper;
 
 @RunWith(SpringRunner.class)
@@ -100,6 +102,14 @@ public class WeatherPredictionTests {
 	public void persistWeatherPredictionIn10Years() {
 		PredictionResult pr = galaxyService.calculateAndSaveWeatherPredictionInYears(defaultGalaxy, 10L, true);
 		System.out.println(pr.toString());
+	}
+	
+	//	Generar un modelo de datos con las condiciones de todos los días hasta 10 años en adelante
+	//	utilizando un job para calcularlas.
+	@Test 
+	public String obtainWeatherConditionDateDescByDay(Integer dayNumber) throws Exception {
+		WeatherConditionDate obj = galaxyService.getWeatherConditionByDayNumber(Long.valueOf(dayNumber));
+		return obj.getWeatherCondition();
 	}
 
 }

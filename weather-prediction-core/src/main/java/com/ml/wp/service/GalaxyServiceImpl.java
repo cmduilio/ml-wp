@@ -17,6 +17,9 @@ import com.ml.wp.repository.WeatherConditionDateRepository;
 @Service
 public class GalaxyServiceImpl implements GalaxyService {
 
+	//TODO define variable for future use
+	private static final long MAX_ALLOCATED_DAY_PATTERN = 3650L;
+
 	private static final Logger LOGGER = Logger.getLogger( GalaxyServiceImpl.class.getName() );
 	
 	@Autowired
@@ -30,11 +33,24 @@ public class GalaxyServiceImpl implements GalaxyService {
 		return calculateAndSaveWeatherPredictionInYears(g, years, false);
 	}
 
+	//TODO dia as Long por la id, new exception pra los dias q no pueden ser consultados
+	//busca equivalente
 	@Override
-	public WeatherConditionDate getWeatherConditionByDayNumber(Long dayNumber) {
-		Optional<WeatherConditionDate> obj = weatherConditionDateRepository.findById(dayNumber);
-		return obj.get();
+	public WeatherConditionDate getWeatherConditionByDayNumber(Long dayNumber) throws Exception {
+		if (dayNumber<1) throw new Exception("El dia consultado no puede ser menor o igual a cero");
+		else {
+			if(dayNumber > MAX_ALLOCATED_DAY_PATTERN) dayNumber = getEquivalentDay(dayNumber);
+			Optional<WeatherConditionDate> obj = weatherConditionDateRepository.findById(dayNumber);
+			return obj.get();
+			}
 		}
+
+	private Long getEquivalentDay(Long dayNumber) {
+		while(dayNumber<MAX_ALLOCATED_DAY_PATTERN) {
+			dayNumber -= MAX_ALLOCATED_DAY_PATTERN; 
+		}
+		return dayNumber;
+	}
 
 	@Override
 	public PredictionResult simulateOneDay(Galaxy g) throws Exception {
