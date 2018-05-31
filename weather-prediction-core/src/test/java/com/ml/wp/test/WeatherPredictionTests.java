@@ -10,26 +10,37 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ml.wp.Application;
+import com.ml.wp.controller.WeatherPredictionController;
 import com.ml.wp.model.Coordinates;
 import com.ml.wp.model.Galaxy;
 import com.ml.wp.model.PredictionResult;
 import com.ml.wp.model.WeatherConditionDate;
 import com.ml.wp.service.GalaxyService;
-import com.ml.wp.service.WeatherService;
 import com.ml.wp.util.Coordinates2DHelper;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = Application.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 public class WeatherPredictionTests {
+	
+	@LocalServerPort
+	private int port;
 
 	@Autowired
 	private GalaxyService galaxyService;
 
 	@Autowired
 	private Galaxy defaultGalaxy;
+	
+	@Autowired
+	private TestRestTemplate restTemplate;
+	
+	@Autowired
+	private WeatherPredictionController wpController;
 
 	@Test
 	public void contextLoads() throws Exception {
@@ -104,12 +115,17 @@ public class WeatherPredictionTests {
 		System.out.println(pr.toString());
 	}
 	
-	//	Generar un modelo de datos con las condiciones de todos los días hasta 10 años en adelante
-	//	utilizando un job para calcularlas.
 	@Test 
-	public String obtainWeatherConditionDateDescByDay(Integer dayNumber) throws Exception {
-		WeatherConditionDate obj = galaxyService.getWeatherConditionByDayNumber(Long.valueOf(dayNumber));
-		return obj.getWeatherCondition();
+	public void obtainWeatherConditionDateDescByDay() throws Exception {
+		WeatherConditionDate obj = galaxyService.getWeatherConditionByDayNumber(360L);
+		assertTrue(obj.getWeatherCondition().contains("Periodo de sequias"));
+
+	}
+	
+	@Test
+	public void getWeatherConditionDateRestTest() {
+		WeatherConditionDate wcd = this.restTemplate.getForObject("http://localhost:" + port + wpController.climaURL + "?dia=360", WeatherConditionDate.class);
+		assertTrue(wcd.getWeatherCondition().contains("Periodo de sequias"));
 	}
 
 }
