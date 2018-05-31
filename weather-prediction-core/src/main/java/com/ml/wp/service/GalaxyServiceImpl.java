@@ -104,7 +104,7 @@ public class GalaxyServiceImpl implements GalaxyService {
 		if (temp.getPeriodsOfDrought()>=1) return "Periodo de sequias"; 
 		if (temp.getPeriodsOfRain()>=1) return "Periodo de lluvias";
 		if (temp.getPeriodsOfOptimalConditions() >= 1) return "Periodo de condiciones optimas de presion y temperatura";
-		return "";
+		return "No se presentan condiciones especiales";
 	}
 
 	@Override

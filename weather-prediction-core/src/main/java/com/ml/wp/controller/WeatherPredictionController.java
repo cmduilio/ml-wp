@@ -20,7 +20,7 @@ public class WeatherPredictionController {
 	@RequestMapping(method = RequestMethod.GET, path=climaURL)
 	public WeatherConditionDate findWeatherConditionDescByDayNumber(@RequestParam(value = "dia") Long dayNumber) throws Exception {
 		if (dayNumber != null) return galaxyService.getWeatherConditionByDayNumber(dayNumber);
-		else return null;
+		else { throw new Exception("El dia ingresado no puede ser nulo o vacio"); }
 	}
 
 	public GalaxyService getGalaxyService() {

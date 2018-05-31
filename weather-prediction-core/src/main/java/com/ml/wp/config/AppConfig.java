@@ -25,6 +25,8 @@ public class AppConfig {
 		planets.add(new Planet("Vulcanos", 5.0, 1000.0, 0.0, 1000.0, 0.0)); //en positivo porque va antihorario
 		return new Galaxy(1L, planets);
 	 }
+	
+	
 }
 
 
