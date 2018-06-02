@@ -106,14 +106,15 @@ public class WeatherPredictionTests {
 	@Test
 	public void calculateWeatherPredictionIn10Years() {
 		PredictionResult pr = galaxyService.calculateWeatherPredictionInYears(defaultGalaxy, 10L);
+		System.out.println("===Resultado total 10 años===");
 		System.out.println(pr.toString());
 	}
 
-	@Test
-	public void persistWeatherPredictionIn10Years() {
-		PredictionResult pr = galaxyService.calculateAndSaveWeatherPredictionInYears(defaultGalaxy, 10L, true);
-		System.out.println(pr.toString());
-	}
+//	@Test
+//	public void persistWeatherPredictionIn10Years() {
+//		PredictionResult pr = galaxyService.calculateAndSaveWeatherPredictionInYears(defaultGalaxy, 10L, true);
+//		System.out.println(pr.toString());
+//	}
 	
 	@Test 
 	public void obtainWeatherConditionDateDescByDay() throws Exception {

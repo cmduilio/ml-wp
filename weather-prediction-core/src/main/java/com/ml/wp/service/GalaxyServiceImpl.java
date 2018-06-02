@@ -1,5 +1,6 @@
 package com.ml.wp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -18,7 +19,8 @@ import com.ml.wp.repository.WeatherConditionDateRepository;
 public class GalaxyServiceImpl implements GalaxyService {
 
 	//TODO define variable for future use
-	private static final long MAX_ALLOCATED_DAY_PATTERN = 3650L;
+	private static final long MAX_ALLOCATED = 3650L;
+	private static final int REPEAT_PATTERN = 360;
 
 	private static final Logger LOGGER = Logger.getLogger( GalaxyServiceImpl.class.getName() );
 	
@@ -39,15 +41,15 @@ public class GalaxyServiceImpl implements GalaxyService {
 	public WeatherConditionDate getWeatherConditionByDayNumber(Long dayNumber) throws Exception {
 		if (dayNumber<1) throw new Exception("El dia consultado no puede ser menor o igual a cero");
 		else {
-			if(dayNumber > MAX_ALLOCATED_DAY_PATTERN) dayNumber = getEquivalentDay(dayNumber);
+			if(dayNumber > MAX_ALLOCATED) dayNumber = getEquivalentDay(dayNumber);
 			Optional<WeatherConditionDate> obj = weatherConditionDateRepository.findById(dayNumber);
 			return obj.get();
 			}
 		}
 
 	private Long getEquivalentDay(Long dayNumber) {
-		while(dayNumber<MAX_ALLOCATED_DAY_PATTERN) {
-			dayNumber -= MAX_ALLOCATED_DAY_PATTERN; 
+		while(dayNumber>MAX_ALLOCATED) {
+			dayNumber -= REPEAT_PATTERN; 
 		}
 		return dayNumber;
 	}
@@ -58,7 +60,7 @@ public class GalaxyServiceImpl implements GalaxyService {
 			List<Planet> planets = g.getPlanets();
 			for (Planet p : planets) {
 				p.simulatePlanetMovementInADay();
-				System.out.println(p.toString()); //DEBUG
+//				System.out.println(p.toString()); //DEBUG
 			}
 			PredictionResult pr = weatherService.evaluateAllClimates(g);
 			return pr;
@@ -78,13 +80,14 @@ public class GalaxyServiceImpl implements GalaxyService {
 			for (int i = 1; i <= yearsInDays; i++) {
 				PredictionResult temp = simulateOneDay(g);
 				
-//				List<Planet> planets = g.getPlanets(); //DEBUG
-//				if (planets.get(0).getAngle().compareTo(0.00) == 0 && planets.get(1).getAngle().compareTo(0.00) == 0 && planets.get(02).getAngle().compareTo(0.00) == 0) {
-//					System.out.println("=== Dia en que todos volvieron al origen " + i );
-//				}
+				List<Planet> planets = g.getPlanets(); //DEBUG
+				if (planets.get(0).getAngle().compareTo(0.00) == 0 && planets.get(1).getAngle().compareTo(0.00) == 0 && planets.get(02).getAngle().compareTo(0.00) == 0) {
+					System.out.println("=== Dia en que todos volvieron al origen " + i );
+				}
 				
-				temp.setMaxPerimeterDay(i);
+				temp.getMaxPerimeterDays().add(i);
 				predictionResult.add(temp);	
+				
 				if (save) {
 					String wcdDescription = getWeatherConditionDateDesc(temp);
 					savePrediction(Long.valueOf(i), wcdDescription);

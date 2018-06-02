@@ -2,9 +2,12 @@ package com.ml.wp.config;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +26,8 @@ import com.ml.wp.spring.AutowiringSpringBeanJobFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 @Configuration
@@ -54,6 +59,7 @@ public class SchedulerConfig {
 		JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
 		factoryBean.setName("galaxyPersistenceJob");
 		factoryBean.setJobClass(jobClass);
+		factoryBean.setGroup("group1");
 		// job has to be durable to be stored in DB:
 		factoryBean.setDurability(true);
 		return factoryBean;
@@ -63,8 +69,10 @@ public class SchedulerConfig {
 	public Scheduler schedulerFactoryBean(DataSource dataSource, JobFactory jobFactory,
 			@Qualifier("jobTrigger") Trigger jobTrigger) throws Exception {
 		SchedulerFactoryBean factory = new SchedulerFactoryBean();
+		
 		// this allows to update triggers in DB when updating settings in config file:
 		factory.setOverwriteExistingJobs(true);
+		
 		factory.setDataSource(dataSource);
 		factory.setJobFactory(jobFactory);
 
@@ -72,11 +80,29 @@ public class SchedulerConfig {
 		factory.afterPropertiesSet();
 
 		Scheduler scheduler = factory.getScheduler();
-		scheduler.setJobFactory(jobFactory);
-		scheduler.scheduleJob((JobDetail) jobTrigger.getJobDataMap().get("jobDetail"), jobTrigger);
-
+		
+		if (checkJobIsPresent(scheduler, "galaxyPersistenceJob") == false) {
+			scheduler.setJobFactory(jobFactory);
+			scheduler.scheduleJob((JobDetail) jobTrigger.getJobDataMap().get("jobDetail"), jobTrigger);
+		}
+		
 		scheduler.start();
 		return scheduler;
+	}
+
+	private boolean checkJobIsPresent(Scheduler scheduler, String searchedJobName) throws SchedulerException {
+		for (String groupName : scheduler.getJobGroupNames()) {
+			for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+				String jobName = jobKey.getName();
+				if(jobName.contains(searchedJobName)) return true;
+				//String jobGroup = jobKey.getGroup();
+				//// get job's trigger
+				//List<Trigger> triggers = (List<Trigger>) scheduler.getTriggersOfJob(jobKey);
+				//Date nextFireTime = triggers.get(0).getNextFireTime();
+				//System.out.println("[jobName] : " + jobName + " [groupName] : " + jobGroup + " - " + nextFireTime);
+			}
+		}
+		return false;
 	}
 
 	@Bean
@@ -91,6 +117,7 @@ public class SchedulerConfig {
 		SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
 		factoryBean.setJobDetail(jobDetail);
 		factoryBean.setStartDelay(0L);
+		factoryBean.setGroup("group1");
 		factoryBean.setRepeatInterval(pollFrequencyMs);
 		factoryBean.setRepeatCount(SimpleTrigger.REPEAT_INDEFINITELY);
 		// in case of misfire, ignore all missed triggers and continue :

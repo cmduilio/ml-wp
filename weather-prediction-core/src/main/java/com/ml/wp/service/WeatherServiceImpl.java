@@ -70,8 +70,9 @@ public class WeatherServiceImpl implements WeatherService {
 			if (!planets.isEmpty()) {
 				//estan alineados?
 				if (Coordinates2DHelper.areAligned(planets.get(0).getPos(), planets.get(1).getPos(), planets.get(2).getPos())) {
-					if(Coordinates2DHelper.areAligned(planets.get(0).getPos(), planets.get(2).getPos(), sun)) //alineados con el sol?
+					if(Coordinates2DHelper.areAligned(planets.get(0).getPos(), planets.get(2).getPos(), sun)) {//alineados con el sol?
 						pr.setPeriodsOfDrought(1);
+					}
 					else {
 						pr.setPeriodsOfOptimalConditions(1);
 					}
