@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import com.ml.wp.model.Galaxy;
 import com.ml.wp.service.GalaxyService;
-import com.ml.wp.service.GalaxyServiceImpl;
 
 @Component
 public class GalaxyPersistenceJob implements Job {

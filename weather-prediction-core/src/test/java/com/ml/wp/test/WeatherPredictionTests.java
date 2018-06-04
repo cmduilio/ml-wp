@@ -110,17 +110,10 @@ public class WeatherPredictionTests {
 		System.out.println(pr.toString());
 	}
 
-//	@Test
-//	public void persistWeatherPredictionIn10Years() {
-//		PredictionResult pr = galaxyService.calculateAndSaveWeatherPredictionInYears(defaultGalaxy, 10L, true);
-//		System.out.println(pr.toString());
-//	}
-	
 	@Test 
 	public void obtainWeatherConditionDateDescByDay() throws Exception {
 		WeatherConditionDate obj = galaxyService.getWeatherConditionByDayNumber(360L);
 		assertTrue(obj.getWeatherCondition().contains("Periodo de sequias"));
-
 	}
 	
 	@Test

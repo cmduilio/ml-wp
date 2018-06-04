@@ -26,8 +26,6 @@ import com.ml.wp.spring.AutowiringSpringBeanJobFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 @Configuration
@@ -85,8 +83,6 @@ public class SchedulerConfig {
 			scheduler.setJobFactory(jobFactory);
 			scheduler.scheduleJob((JobDetail) jobTrigger.getJobDataMap().get("jobDetail"), jobTrigger);
 		}
-		
-		scheduler.start();
 		return scheduler;
 	}
 
